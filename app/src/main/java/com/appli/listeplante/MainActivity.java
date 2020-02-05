@@ -9,19 +9,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.appli.listeplante.PlaneteAdapter;
+import com.appli.listeplante.Data;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ArrayList<String> planetes;
     private ListView listview;
     private PlaneteAdapter adapter;
+    Button submit=null;
+    //Spinner spinner=null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,76 +35,57 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         listview = (ListView) findViewById(R.id.listView);
+        submit=findViewById(R.id.buttonSub);
 
-        adapter = new PlaneteAdapter();
+
+        adapter = new PlaneteAdapter(getApplicationContext());
 
         listview.setAdapter(adapter);
-    }
-    private void installePlanetes() {
-        planetes = new ArrayList<String>();
-        planetes.add("Mercure");
-        planetes.add("Venus");
-        planetes.add("Terre");
-        planetes.add("Mars");
-        planetes.add("Jupiter");
-        planetes.add("Saturne");
-        planetes.add("Uranus");
-        planetes.add("Neptune");
-        planetes.add("Pluton");
-    }
-    class PlaneteAdapter extends BaseAdapter {
 
-        @Override
-        public int getCount() {
-            installePlanetes();
-            return planetes.size();
-        }
-
-        @Override
-        public Object getItem(int arg0) {
-            return planetes.get(arg0);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return 0;
-        }
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View itemView = convertView;
-            if (convertView == null) {
-                LayoutInflater inflater = (LayoutInflater)
-                MainActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                itemView = inflater.inflate(R.layout.listitem, null);
-            }
-
-            TextView nomPlanete = (TextView) itemView.findViewById(R.id.textView);
-            final CheckBox checkBox = (CheckBox) itemView.findViewById(R.id.checkbox);
-            final Spinner spinner = (Spinner) itemView.findViewById(R.id.spinner);
-
-            nomPlanete.setText(planetes.get(position));
-
-
-            String[] taillePlanetes = {"4900", "12000", "12800", "6800", "144000", "120000", "52000", "50000", "2300"};
-            final ArrayAdapter<String> spinadapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_spinner_item, taillePlanetes);
-            spinadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            spinner.setAdapter(spinadapter);
-
-            checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    CheckBox checkBox = (CheckBox)  compoundButton.findViewById(R.id.checkbox);
-                    if (checkBox.isChecked()) {
-                        spinner.setEnabled(false);
-                        spinadapter.notifyDataSetChanged();
-                    } else {
-                        spinner.setEnabled(true);
-                        spinadapter.notifyDataSetChanged();
+        submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(tousCheck()){
+                    if(verifTaille()){
+                        popUp("Bravo champion!!");
+                    }
+                    else{
+                        popUp("Dommage, essayer encore");
                     }
                 }
-            });
+                else{
+                    popUp("Vous devez cocher toutes les cases");
+                }
+            }
+        });
 
-            return itemView;
+    }
+
+    public boolean tousCheck(){
+        boolean x=true;
+        for (int i=0;i<adapter.getCount()-1;i++){
+            View b= (View) listview.getChildAt(i);
+            CheckBox check=b.findViewById(R.id.checkbox);
+            if(!check.isChecked()){
+                x=false;
+            }
         }
+        return x;
+    }
+    public boolean verifTaille(){
+        boolean x=true;
+        for (int i=0;i<adapter.getCount();i++) {
+            View itemview= (View) listview.getChildAt(i);
+            Spinner spin=itemview.findViewById(R.id.spinner);
+            Data d=new Data();
+            if(d.getTaillePlanetes(i)!=spin.getSelectedItem().toString()){
+                //popUp("pour i="+i+" nous avons rempli : "+spin.getPrompt().toString()+" alors que la plane"+d.getTaillePlanetes(i));
+                x=false;
+            }
+        }
+        return x;
+    }
+    public void popUp(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 }
