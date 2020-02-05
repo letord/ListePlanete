@@ -6,8 +6,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import com.appli.listeplante.MainActivity;
@@ -75,6 +78,26 @@ public class PlaneteAdapter extends BaseAdapter {
                 } else {
                     spinner.setEnabled(true);
                     spinadapter.notifyDataSetChanged();
+                }
+
+            }
+        });
+        checkBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LinearLayout parent = (LinearLayout) checkBox.getParent().getParent().getParent();
+                boolean x=true;
+                ListView listView=parent.findViewById(R.id.listView);
+                for (int i=0;i<planetes.size();i++) {
+                    View vv=listView.getChildAt(i);
+                    CheckBox checkBox=vv.findViewById(R.id.checkbox);
+                    if (!checkBox.isChecked()) {
+                        x = false;
+                    }
+                }
+                if (x){
+                    Button button =parent.findViewById(R.id.buttonSub);
+                    button.setEnabled(true);
                 }
 
 

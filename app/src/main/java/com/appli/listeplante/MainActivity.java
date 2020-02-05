@@ -41,11 +41,11 @@ public class MainActivity extends AppCompatActivity {
         adapter = new PlaneteAdapter(getApplicationContext());
 
         listview.setAdapter(adapter);
+        submit.setEnabled(false);
 
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(tousCheck()){
                     if(verifTaille()){
                         popUp("Bravo champion!!");
                     }
@@ -53,10 +53,6 @@ public class MainActivity extends AppCompatActivity {
                         popUp("Dommage, essayer encore");
                     }
                 }
-                else{
-                    popUp("Vous devez cocher toutes les cases");
-                }
-            }
         });
 
     }
@@ -72,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
         }
         return x;
     }
+
     public boolean verifTaille(){
         boolean x=true;
         for (int i=0;i<adapter.getCount();i++) {
